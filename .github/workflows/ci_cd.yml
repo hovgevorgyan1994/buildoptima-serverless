@@ -1,0 +1,53 @@
+name: CI/CD
+
+on:
+  workflow_call:
+    inputs:
+      application_name:
+        required: true
+        type: string
+      application_jar_name:
+        required: true
+        type: string
+      aws_s3_bucket_name:
+        required: true
+        type: string
+      aws_lambda_authorizer_name:
+        required: true
+        type: string
+        
+env:
+  APPLICATION_NAME: ${{ inputs.application_name }}
+  APPLICATION_JAR_NAME: ${{ inputs.application_jar_name }}
+  AWS_LAMBDA_AUTHORIZER_NAME: ${{ inputs.aws_lambda_authorizer_name }}
+  AWS_S3_BUCKET_NAME: ${{ inputs.aws_s3_bucket_name }}
+
+jobs:
+  test_build_deploy:
+    name: Build & Upload To Lambda
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          name: buildoptima
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build With Maven
+        run: |
+          cd $APPLICATION_NAME
+          mvn package -DskipTests
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Upload Jar To Lambda
+        run: |
+          cd $APPLICATION_NAME
+          aws s3 cp ./target/$APPLICATION_JAR_NAME s3://$AWS_S3_BUCKET_NAME/$GITHUB_SHA
+          aws lambda update-function-code --function-name $AWS_LAMBDA_AUTHORIZER_NAME --s3-bucket $AWS_S3_BUCKET_NAME --s3-key $GITHUB_SHA
+          

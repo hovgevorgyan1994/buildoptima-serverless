@@ -52,9 +52,9 @@ public class Authorizer
       auth = AUTHENTICATION_SUCCESS_RESULT;
       logger.log("Successful authorization.");
     } catch (TokenExpiredException ex) {
-      logger.log("The access token is expired");
+      logger.log("The access token is expired.");
     } catch (JWTVerificationException ex) {
-      logger.log("The access token is invalid");
+      logger.log("The access token is invalid.");
     }
 
     return getResponse(event, auth, params);
