@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/authorizer/authorizer.iml" filepath="$PROJECT_DIR$/authorizer/authorizer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/buildoptima_serverless.iml" filepath="$PROJECT_DIR$/.idea/buildoptima_serverless.iml" />
+    </modules>
+  </component>
+</project>
