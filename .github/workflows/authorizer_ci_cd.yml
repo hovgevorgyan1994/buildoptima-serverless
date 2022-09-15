@@ -8,7 +8,7 @@ on:
       - 'pom.xml'
 
 jobs:
-  test_build_deploy:
+  build_deploy:
     uses: ./.github/workflows/ci_cd.yml
     with:
       application_name: authorizer

@@ -38,7 +38,7 @@ public class Authorizer
     if (token != null) {
       token = token.replace(JwtConfigProperties.getAuthorizationHeaderPrefix(), "");
     } else {
-      logger.log("The access token is missing");
+      logger.log("The access token is missing.");
       return null;
     }
 

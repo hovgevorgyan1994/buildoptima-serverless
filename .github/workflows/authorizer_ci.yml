@@ -1,0 +1,14 @@
+name: Authorizer CI
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'authorizer/**'
+      - 'pom.xml'
+
+jobs:
+  test_build_deploy:
+    uses: ./.github/workflows/ci.yml
+    with:
+      application_name: authorizer
