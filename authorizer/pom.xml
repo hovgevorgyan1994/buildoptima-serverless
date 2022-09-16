@@ -22,7 +22,6 @@
   <description>authorizer</description>
 
   <properties>
-    <java.version>17</java.version>
     <com.auth0.jjwt.version>4.0.0-beta.0</com.auth0.jjwt.version>
     <jjwt.version>0.9.1</jjwt.version>
   </properties>

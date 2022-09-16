@@ -26,7 +26,7 @@ import java.util.Map;
 public class Authorizer
     implements RequestHandler<APIGatewayCustomAuthorizerEvent, IamPolicyResponse> {
 
-  public static final String USER_ID = "id";
+  public static final String USER_ID = "user_id";
   public static final String USER_AUTHORITIES = "authorities";
   public static final String USER_USERNAME = "username";
 
