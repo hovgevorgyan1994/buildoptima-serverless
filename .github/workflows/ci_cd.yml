@@ -48,6 +48,6 @@ jobs:
       - name: Upload Jar To Lambda
         run: |
           cd $APPLICATION_NAME
-          aws s3 cp ./target/$APPLICATION_JAR_NAME s3://$AWS_S3_BUCKET_NAME/$GITHUB_SHA
-          aws lambda update-function-code --function-name $AWS_LAMBDA_AUTHORIZER_NAME --s3-bucket $AWS_S3_BUCKET_NAME --s3-key $GITHUB_SHA
+          aws s3 cp ./target/$APPLICATION_JAR_NAME s3://$AWS_S3_BUCKET_NAME/$GITHUB_SHA.jar
+          aws lambda update-function-code --function-name $AWS_LAMBDA_AUTHORIZER_NAME --s3-bucket $AWS_S3_BUCKET_NAME --s3-key $GITHUB_SHA.jar
           
