@@ -8,9 +8,33 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-
   <name>Serverless</name>
   <description>Serverless</description>
+
+  <modules>
+    <module>authorizer</module>
+    <module>mailsender</module>
+  </modules>
+
+  <properties>
+    <java.version>17</java.version>
+    <maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
+    <aws-lambda-java-core.version>1.2.1</aws-lambda-java-core.version>
+    <aws-lambda-java-events.version>3.11.0</aws-lambda-java-events.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-lambda-java-core</artifactId>
+      <version>${aws-lambda-java-core.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-lambda-java-events</artifactId>
+      <version>${aws-lambda-java-events.version}</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
@@ -18,8 +42,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>9</source>
-          <target>9</target>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
         </configuration>
       </plugin>
       <plugin>
@@ -63,15 +87,4 @@
     </plugins>
   </build>
 
-  <modules>
-    <module>authorizer</module>
-  </modules>
-
-  <properties>
-    <java.version>17</java.version>
-    <maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
-  </properties>
-
-  <dependencies>
-  </dependencies>
 </project>
