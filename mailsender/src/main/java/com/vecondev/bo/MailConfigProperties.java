@@ -2,8 +2,6 @@ package com.vecondev.bo;
 
 public class MailConfigProperties {
 
-  private MailConfigProperties() {}
-
   public static final String HOST;
   public static final String PORT;
   public static final String USERNAME;
@@ -12,6 +10,8 @@ public class MailConfigProperties {
   public static final String CONFIRMATION_URI;
   public static final String VERIFICATION_URI;
   public static final String HOST_ADDRESS;
+
+  private MailConfigProperties() {}
 
   static {
     HOST = System.getenv("SMTP_HOST");

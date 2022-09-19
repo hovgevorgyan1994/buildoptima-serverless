@@ -3,13 +3,12 @@ package com.vecondev.bo;
 import static com.vecondev.bo.MailConfigProperties.CONFIRMATION_URI;
 import static com.vecondev.bo.MailConfigProperties.HOST_ADDRESS;
 import static com.vecondev.bo.MailConfigProperties.VERIFICATION_URI;
+import static javax.mail.Message.RecipientType.TO;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
-import com.amazonaws.services.s3.model.S3Object;
-import javax.mail.Message.RecipientType;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -20,7 +19,7 @@ public class MailSender implements RequestHandler<SQSEvent, Void> {
   private static final String VERIFICATION_MAIL_SUBJECT = "CREATE NEW PASSWORD";
   private static final String FIRSTNAME = "{{FIRSTNAME}}";
   private static final String LINK = "{{LINK}}";
-  private static final String CONFIRM = "confirm";
+  private static final String CONFIRM = "confirm.html";
   private static final String TEXT_HTML = "text/html";
 
   @Override
@@ -30,12 +29,13 @@ public class MailSender implements RequestHandler<SQSEvent, Void> {
             .map(SQSMessage::getBody)
             .map(Message::getObjectFromString)
             .findAny()
-            .orElseThrow();
+            .orElseThrow(IllegalStateException::new);
 
-    S3Object object = AmazonS3Service.getObject(message.getTemplate());
-    String template = FileUtil.getTemplateAsString(object);
-    template = prepare(template, message);
-    sendEmail(message, template);
+    String templateAsString =
+        FileUtil.getTemplateAsString(AmazonS3Service.getObject(message.getTemplate()));
+    templateAsString = prepare(templateAsString, message);
+    sendEmail(message, templateAsString);
+
     return null;
   }
 
@@ -43,8 +43,9 @@ public class MailSender implements RequestHandler<SQSEvent, Void> {
     try {
       MimeMessage mimeMessage = MailConfig.mimeMessage();
       mimeMessage.setSubject(message.getSubject());
-      mimeMessage.setRecipient(RecipientType.TO, new InternetAddress(message.getUserEmail()));
+      mimeMessage.setRecipient(TO, new InternetAddress(message.getUserEmail()));
       mimeMessage.setContent(template, TEXT_HTML);
+
       Transport.send(mimeMessage);
     } catch (Exception e) {
       throw new IllegalStateException(e);
@@ -56,13 +57,14 @@ public class MailSender implements RequestHandler<SQSEvent, Void> {
     template =
         template.replace(
             LINK,
-            message.getTemplate().contains(CONFIRM)
+            message.getTemplate().equals(CONFIRM)
                 ? HOST_ADDRESS + CONFIRMATION_URI + message.getToken()
                 : HOST_ADDRESS + VERIFICATION_URI + message.getToken());
     message.setSubject(
         message.getTemplate().contains(CONFIRM)
             ? CONFIRMATION_MAIL_SUBJECT
             : VERIFICATION_MAIL_SUBJECT);
+
     return template;
   }
 }

@@ -12,6 +12,8 @@ public class Message {
   private String userEmail;
   private String userFirstName;
 
+  public Message() {}
+
   public Message(
       String template, String subject, String token, String email, String userFirstName) {
     this.template = template;
@@ -19,6 +21,16 @@ public class Message {
     this.token = token;
     this.userEmail = email;
     this.userFirstName = userFirstName;
+  }
+
+  public static Message getObjectFromString(String object) {
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    try {
+      return mapper.readValue(object, new TypeReference<>() {});
+    } catch (JsonProcessingException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   public String getToken() {
@@ -43,16 +55,6 @@ public class Message {
 
   public void setUserFirstName(String userFirstName) {
     this.userFirstName = userFirstName;
-  }
-
-  public static Message getObjectFromString(String object) {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-    try {
-      return mapper.readValue(object, new TypeReference<>() {});
-    } catch (JsonProcessingException e) {
-      throw new IllegalStateException(e);
-    }
   }
 
   public String getTemplate() {

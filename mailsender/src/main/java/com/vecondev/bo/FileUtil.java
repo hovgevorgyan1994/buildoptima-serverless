@@ -12,6 +12,8 @@ import java.util.UUID;
 
 public class FileUtil {
 
+  private static final String HTML_SUFFIX = "html";
+
   private FileUtil() {}
 
   public static String getTemplateAsString(S3Object s3Object) {
@@ -25,6 +27,14 @@ public class FileUtil {
     }
   }
 
+  private static Path convertS3ObjectToPath(S3Object s3Object) throws IOException {
+    S3ObjectInputStream inputStream = s3Object.getObjectContent();
+    byte[] bytes = IOUtils.toByteArray(inputStream);
+    Path tempFile = Files.createTempFile(UUID.randomUUID().toString(), HTML_SUFFIX);
+    Files.write(tempFile, bytes);
+    return tempFile;
+  }
+
   private static String readFromFile(Path path) {
     try (BufferedReader reader = new BufferedReader(new java.io.FileReader(path.toFile()))) {
       StringBuilder builder = new StringBuilder();
@@ -36,18 +46,6 @@ public class FileUtil {
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }
-  }
-
-  private static Path convertS3ObjectToPath(S3Object s3Object) throws IOException {
-    S3ObjectInputStream inputStream = s3Object.getObjectContent();
-    byte[] bytes = IOUtils.toByteArray(inputStream);
-    return convertToFilePath(bytes);
-  }
-
-  private static Path convertToFilePath(byte[] bytes) throws IOException {
-    Path tempFile = Files.createTempFile(String.valueOf(UUID.randomUUID()), ".html");
-    Files.write(tempFile, bytes);
-    return tempFile;
   }
 
   private static void deleteFile(File file) {

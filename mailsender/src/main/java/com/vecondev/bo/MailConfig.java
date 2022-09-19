@@ -28,6 +28,27 @@ public class MailConfig {
   private MailConfig() {}
 
   public static MimeMessage mimeMessage() {
+    MimeMessage message = new MimeMessage(createSession());
+    try {
+      message.setFrom(new InternetAddress(FROM));
+      return message;
+    } catch (MessagingException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  private static Session createSession() {
+    return Session.getInstance(
+        createProperties(),
+        new Authenticator() {
+          @Override
+          protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(USERNAME, PASSWORD);
+          }
+        });
+  }
+
+  private static Properties createProperties() {
     Properties properties = new Properties();
     properties.put(SMTP_AUTH, TRUE);
     properties.put(SMTP_STARTTLS, TRUE);
@@ -35,23 +56,6 @@ public class MailConfig {
     properties.put(SMTP_PORT, PORT);
     properties.put(SMTP_SSL_TRUST, HOST);
     properties.put(SMTP_PROTOCOL, TLS);
-
-    Session session =
-        Session.getInstance(
-            properties,
-            new Authenticator() {
-              @Override
-              protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(USERNAME, PASSWORD);
-              }
-            });
-
-    MimeMessage message = new MimeMessage(session);
-    try {
-      message.setFrom(new InternetAddress(FROM));
-      return message;
-    } catch (MessagingException e) {
-      throw new IllegalStateException(e);
-    }
+    return properties;
   }
 }
