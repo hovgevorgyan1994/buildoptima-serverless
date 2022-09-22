@@ -1,8 +1,8 @@
-package com.vecondev.bo.authorizer;
+package com.vecondev.buildoptima.authorizer;
 
-import static com.vecondev.bo.authorizer.Error.ACCESS_TOKEN_EXPIRED;
-import static com.vecondev.bo.authorizer.Error.ACCESS_TOKEN_MISSING;
-import static com.vecondev.bo.authorizer.Error.INVALID_ACCESS_TOKEN;
+import static com.vecondev.buildoptima.authorizer.Error.ACCESS_TOKEN_EXPIRED;
+import static com.vecondev.buildoptima.authorizer.Error.ACCESS_TOKEN_MISSING;
+import static com.vecondev.buildoptima.authorizer.Error.INVALID_ACCESS_TOKEN;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;

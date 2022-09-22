@@ -1,8 +1,8 @@
-package com.vecondev.bo;
+package com.vecondev.buildoptima.mailsender;
 
-import static com.vecondev.bo.S3ConfigProperties.ACCESS;
-import static com.vecondev.bo.S3ConfigProperties.BUCKET;
-import static com.vecondev.bo.S3ConfigProperties.SECRET;
+import static com.vecondev.buildoptima.mailsender.S3ConfigProperties.ACCESS;
+import static com.vecondev.buildoptima.mailsender.S3ConfigProperties.BUCKET;
+import static com.vecondev.buildoptima.mailsender.S3ConfigProperties.SECRET;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

@@ -1,10 +1,10 @@
-package com.vecondev.bo;
+package com.vecondev.buildoptima.mailsender;
 
-import static com.vecondev.bo.MailConfigProperties.FROM;
-import static com.vecondev.bo.MailConfigProperties.HOST;
-import static com.vecondev.bo.MailConfigProperties.PASSWORD;
-import static com.vecondev.bo.MailConfigProperties.PORT;
-import static com.vecondev.bo.MailConfigProperties.USERNAME;
+import static com.vecondev.buildoptima.mailsender.MailConfigProperties.FROM;
+import static com.vecondev.buildoptima.mailsender.MailConfigProperties.HOST;
+import static com.vecondev.buildoptima.mailsender.MailConfigProperties.PASSWORD;
+import static com.vecondev.buildoptima.mailsender.MailConfigProperties.PORT;
+import static com.vecondev.buildoptima.mailsender.MailConfigProperties.USERNAME;
 
 import java.util.Properties;
 import javax.mail.Authenticator;

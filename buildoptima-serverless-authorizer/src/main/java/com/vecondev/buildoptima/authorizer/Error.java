@@ -1,4 +1,4 @@
-package com.vecondev.bo.authorizer;
+package com.vecondev.buildoptima.authorizer;
 
 public enum Error {
 

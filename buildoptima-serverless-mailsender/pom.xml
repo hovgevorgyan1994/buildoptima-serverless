@@ -2,20 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>bo</artifactId>
-    <groupId>com.vecondev.bo</groupId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
   <modelVersion>4.0.0</modelVersion>
 
+  <groupId>com.vecondev.buildoptima.mailsender</groupId>
   <artifactId>mailsender</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+  <parent>
+    <groupId>com.vecondev.buildoptima</groupId>
+    <artifactId>buildoptima-serverless</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
 
   <properties>
     <javax.mail.version>1.5.0-b01</javax.mail.version>
     <aws.sdk.s3.version>1.12.302</aws.sdk.s3.version>
   </properties>
-
 
   <dependencies>
     <dependency>
@@ -31,6 +33,5 @@
     </dependency>
 
   </dependencies>
-
 
 </project>

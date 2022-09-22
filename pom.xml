@@ -3,17 +3,17 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.vecondev.bo</groupId>
-  <artifactId>bo</artifactId>
+
+  <groupId>com.vecondev.buildoptima</groupId>
+  <artifactId>buildoptima-serverless</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-
-  <name>Serverless</name>
-  <description>Serverless</description>
+  <name>buildoptima-serverless</name>
+  <description>Buildoptima Serverless</description>
 
   <modules>
-    <module>authorizer</module>
-    <module>mailsender</module>
+    <module>buildoptima-serverless-authorizer</module>
+    <module>buildoptima-serverless-mailsender</module>
   </modules>
 
   <properties>

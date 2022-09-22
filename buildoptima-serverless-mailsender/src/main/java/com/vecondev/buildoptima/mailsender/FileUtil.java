@@ -1,4 +1,4 @@
-package com.vecondev.bo;
+package com.vecondev.buildoptima.mailsender;
 
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;

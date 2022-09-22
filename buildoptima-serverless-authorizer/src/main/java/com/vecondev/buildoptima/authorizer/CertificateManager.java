@@ -1,4 +1,4 @@
-package com.vecondev.bo.authorizer;
+package com.vecondev.buildoptima.authorizer;
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.lang.Assert;

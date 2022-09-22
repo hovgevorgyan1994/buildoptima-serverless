@@ -1,8 +1,8 @@
-package com.vecondev.bo;
+package com.vecondev.buildoptima.mailsender;
 
-import static com.vecondev.bo.MailConfigProperties.CONFIRMATION_URI;
-import static com.vecondev.bo.MailConfigProperties.HOST_ADDRESS;
-import static com.vecondev.bo.MailConfigProperties.VERIFICATION_URI;
+import static com.vecondev.buildoptima.mailsender.MailConfigProperties.CONFIRMATION_URI;
+import static com.vecondev.buildoptima.mailsender.MailConfigProperties.HOST_ADDRESS;
+import static com.vecondev.buildoptima.mailsender.MailConfigProperties.VERIFICATION_URI;
 import static javax.mail.Message.RecipientType.TO;
 
 import com.amazonaws.services.lambda.runtime.Context;

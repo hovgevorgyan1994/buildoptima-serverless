@@ -1,4 +1,4 @@
-package com.vecondev.bo;
+package com.vecondev.buildoptima.mailsender;
 
 public class MailConfigProperties {
 
