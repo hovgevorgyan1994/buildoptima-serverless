@@ -1,10 +1,10 @@
-name: Authorizer CI
+name: Mailsender CI
 
 on:
   pull_request:
     branches: [ "main" ]
     paths:
-      - 'buildoptima-serverless-authorizer/**'
+      - 'buildoptima-serverless-mailsender/**'
       - 'pom.xml'
 
 jobs:

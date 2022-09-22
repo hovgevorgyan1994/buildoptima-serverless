@@ -1,0 +1,5810 @@
+openapi: 3.0.1
+info:
+  title: BUILDOPTIMA API
+  description: PROPERTY INFORMATION MANAGEMENT
+  version: V1
+tags:
+  - name: User
+    description: Endpoints for managing users
+    externalDocs:
+      description: Click here to see a detailed explanation of application errors
+      url: >-
+        https://github.com/vecondev/buildoptima-api/blob/develop/docs/application-errors.md
+  - name: FAQ Question
+    description: Endpoints for managing FAQ questions
+    externalDocs:
+      description: Click here to see a detailed explanation of application errors
+      url: >-
+        https://github.com/vecondev/buildoptima-api/blob/develop/docs/application-errors.md
+  - name: Property
+    description: Endpoints for managing properties
+    externalDocs:
+      description: Click here to see a detailed explanation of application errors
+      url: >-
+        https://github.com/vecondev/buildoptima-api/blob/develop/docs/application-errors.md
+  - name: Authentication
+    description: Endpoints for user authentication
+    externalDocs:
+      description: Click here to see a detailed explanation of application errors
+      url: >-
+        https://github.com/vecondev/buildoptima-api/blob/develop/docs/application-errors.md
+  - name: News
+    description: Endpoints for managing news
+    externalDocs:
+      description: Click here to see a detailed explanation of application errors
+      url: >-
+        https://github.com/vecondev/buildoptima-api/blob/develop/docs/application-errors.md
+  - name: FAQ Category
+    description: Endpoints for managing FAQ categories
+    externalDocs:
+      description: Click here to see a detailed explanation of application errors
+      url: >-
+        https://github.com/vecondev/buildoptima-api/blob/develop/docs/application-errors.md
+  - name: Property migration
+    description: Endpoints for managing property migrations
+    externalDocs:
+      description: Click here to see a detailed explanation of application errors
+      url: >-
+        https://github.com/vecondev/buildoptima-api/blob/develop/docs/application-errors.md
+paths:
+  /api/v1/user/password/change:
+    put:
+      tags:
+        - User
+      summary: Change password
+      description: >-
+        Possible error codes: 4001, 40011, 4011, 4012, 4013, 4014, 4031, 4042,
+        4091,  5007
+      operationId: changePassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequestDTO'
+        required: true
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User password was successfully changed
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+        '400':
+          description: 'There is an invalid value in user input.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodArgumentNotValidResponse'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Provided the same password in change password request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "PUT"
+        uri: "{INTEGRATION_URL}/user/password/change"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "409":
+            statusCode: "409"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/faq/questions/{id}:
+    get:
+      tags:
+        - FAQ Question
+      summary: Get FAQ Question by id
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 4043, 5007'
+      operationId: getById_2
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The FAQ Question should be got
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQCategoryResponseDTO'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: There is no FAQ Question found with such Id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/faq/questions/{id}"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    put:
+      tags:
+        - FAQ Question
+      summary: Update the FAQ Question
+      description: >-
+        Possible error codes: 40011, 4011, 4012, 4013, 4014, 4031, 4042, 4043,
+        4044, 4095, 5007
+      operationId: update
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FAQQuestionRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: New FAQ Question should be created.
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQQuestionResponseDTO'
+        '400':
+          description: 'There is an invalid value in user input.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodArgumentNotValidResponse'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: One of the resources of category, question and user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: There already is an duplicate value for the question.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "PUT"
+        uri: "{INTEGRATION_URL}/faq/questions/{id}"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "409":
+            statusCode: "409"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    delete:
+      tags:
+        - FAQ Question
+      summary: Delete the FAQ Question
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 4043, 5007'
+      operationId: delete_1
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The FAQ Question should be deleted
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQCategoryResponseDTO'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: There is no FAQ Question found with such Id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "DELETE"
+        uri: "{INTEGRATION_URL}/faq/questions/{id}"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "409":
+            statusCode: "409"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS,PUT,DELETE'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/faq/categories/{id}:
+    get:
+      tags:
+        - FAQ Category
+      summary: Get FAQ category by id
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 4044, 5007'
+      operationId: getById_3
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The FAQ Category should be retrieved
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQCategoryResponseDTO'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: There is no FAQ Category found with such Id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/faq/categories/{id}"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    put:
+      tags:
+        - FAQ Category
+      summary: Update the FAQ category
+      description: >-
+        Possible error codes: 40011, 4011, 4012, 4013, 4014, 4031, 4042, 4044,
+        4094, 5007
+      operationId: update_1
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FAQCategoryRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: The FAQ Category should be updated
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQCategoryResponseDTO'
+        '400':
+          description: 'There is an invalid value in user input.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodArgumentNotValidResponse'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: There is no FAQ Category or User found with such Id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: There already is an duplicate value for category name.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "PUT"
+        uri: "{INTEGRATION_URL}/faq/categories/{id}"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "409":
+            statusCode: "409"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    delete:
+      tags:
+        - FAQ Category
+      summary: Delete the FAQ category
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 4044, 4096, 5007'
+      operationId: delete_2
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The FAQ Category should be deleted
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQCategoryResponseDTO'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: There is no FAQ Category found with such Id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: |-
+            There are dependent FAQ questions, so category
+            can only be deleted after deleting that questions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "DELETE"
+        uri: "{INTEGRATION_URL}/faq/categories/{id}"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "409":
+            statusCode: "409"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS,PUT,DELETE'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/auth/password/restore:
+    put:
+      tags:
+        - Authentication
+      summary: Restore forgotten password
+      description: 'Possible error codes: 40011, 4041'
+      operationId: restorePassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestorePasswordRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: User password successfully changed
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+        '400':
+          description: 'There is an invalid value in user input.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodArgumentNotValidResponse'
+        '404':
+          description: Confirmation token not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "PUT"
+        uri: "{INTEGRATION_URL}/auth/password/restore"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/auth/activation:
+    put:
+      tags:
+        - Authentication
+      summary: Activate email
+      description: 'Possible error codes: 4041'
+      operationId: activate
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User account activated by email confirmation
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDTO'
+        '404':
+          description: Email confirmation token is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "PUT"
+        uri: "{INTEGRATION_URL}/auth/activation"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/user/{id}/image:
+    get:
+      tags:
+        - User
+      summary: Download the original image of given user
+      description: >
+        Possible error codes: 4011, 4012, 4013, 4014, 4031, 4042, 4045, 5005,
+        5007.
+
+        The permission to download the image has only the resource owner and the
+        admin
+      operationId: downloadOriginalImage
+      parameters:
+        - name: id
+          in: path
+          description: The user id whom image should be downloaded
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The image is successfully downloaded
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            image/jpeg: { }
+            image/png: { }
+            application/json: { }
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: The image or user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/user/{id}/image"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    post:
+      tags:
+        - User
+      summary: Upload new image or update the previous one of given user
+      description: >-
+        Possible error codes: 4004, 4011, 4012, 4013, 4014, 4031, 4121,
+
+        4122, 4123, 4124, 5002, 5003, 5005, 5006, 5007, 5009.
+
+        The image has following requirements (extension: jpeg/jpg/png,
+
+        min_width: 600px, max_width: 600px, size: 70KB-30MB).
+
+        To get the uploaded image urls: original image url:
+
+        'https://buildoptima.s3.amazonaws.com/user/{user_id}/original/{version}'
+
+        thumbnail image url:
+        'https://buildoptima.s3.amazonaws.com/user/{user_id}/thumbnail/{version}'
+      operationId: uploadImage
+      parameters:
+        - name: id
+          in: path
+          description: The user's id whom photo should be uploaded
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: Content-type
+          in: header
+          schema:
+            type: string
+        - name: Accept
+          in: header
+          schema:
+            type: string
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  description: The image user want to upload
+                  format: binary
+      responses:
+        '200':
+          description: The image is successfully uploaded/updated
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageOverview'
+        '400':
+          description: Image is not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '412':
+          description: The provided image  doesn't fit the requirements
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/user/{id}/image"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "412":
+            statusCode: "412"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+          integration.request.header.Content-type: "method.request.header.Content-type"
+          integration.request.header.Accept: "method.request.header.Accept"
+        passthroughBehavior: "when_no_match"
+    delete:
+      tags:
+        - User
+      summary: Delete the images (original, thumbnail) of given user
+      description: >
+        Possible error codes: 4011, 4012, 4013, 4014, 4042, 4045, 5007.
+
+        The permission to download the image has only the resource owner and the
+        admin.
+      operationId: deleteImage
+      parameters:
+        - name: id
+          in: path
+          description: The user id whom image should be deleted
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The image is successfully deleted
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: The image or user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "DELETE"
+        uri: "{INTEGRATION_URL}/user/{id}/image"
+        responses:
+          "204":
+            statusCode: "204"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,DELETE,OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/user/fetch:
+    post:
+      tags:
+        - User
+      summary: 'Fetch filtered, sorted and paged '
+      description: >-
+        Possible error codes: 4002, 4003, 40014, 4011, 4012, 4013, 4014, 4031,
+        5007
+      externalDocs:
+        description: Click here to see a detailed explanation of this endpoint requirements
+        url: >-
+          https://github.com/vecondev/buildoptima-api/blob/develop/docs/filtering-sorting.md
+      operationId: fetch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FetchUsersRequest'
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fetched results from DB
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchResponseDTO'
+        '400':
+          description: There is an invalid value in request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/user/fetch"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/properties/re-process:
+    post:
+      tags:
+        - Property migration
+      summary: Re-process all failed files
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 4047, 4048, 5007'
+      operationId: reprocessFailedToProcessFiles
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All failed files were re-processed
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyReprocessResponseDTO'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: >-
+            Migration metadata or Migration history not found with such
+            id/property_ain
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/properties/re-process"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/properties/migrate:
+    post:
+      tags:
+        - Property migration
+      summary: Migrate all unprocessed files
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 4047, 4048, 5007'
+      operationId: migrateUnprocessedFiles
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All files were processed
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyMigrationResponseDTO'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: >-
+            Migration metadata or Migration history not found with such
+            id/property_ain
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/properties/migrate"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/news:
+    post:
+      tags:
+        - News
+      summary: Add news item
+      description: |-
+        Possible error codes: 40011, 4011, 4012, 4013, 4014,
+        4031, 4121, 4122, 4123, 4124, 5002, 5003, 5005, 5006, 5007, 5009
+      operationId: create
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NewsCreationRequestDTO'
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '201':
+          description: News has been added
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: uuid
+        '400':
+          description: 'There is an invalid value in user input.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodArgumentNotValidResponse'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '412':
+          description: >-
+            Image is not provided or the provided image  doesn't fit the
+            requirements
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/news"
+        responses:
+          "201":
+            statusCode: "201"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "412":
+            statusCode: "412"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/news/fetch:
+    post:
+      tags:
+        - News
+      summary: 'Fetch filtered, sorted and paged '
+      description: >-
+        Possible error codes: 4002, 4003, 40014, 4011, 4012, 4013, 4014, 4031,
+        5007
+      externalDocs:
+        description: Click here to see a detailed explanation of this endpoint requirements
+        url: >-
+          https://github.com/vecondev/buildoptima-api/blob/develop/docs/filtering-sorting.md
+      operationId: fetch_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FetchNewsRequest'
+        required: true
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fetched results from DB
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchResponseDTO'
+        '400':
+          description: There is an invalid value in request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/news/fetch"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/news/csv:
+    post:
+      tags:
+        - News
+      summary: Export news csv
+      description: |-
+        Possible error codes: 4002, 4003, 40014, 4011, 4012,
+        4013, 4014, 4031, 5004, 5007.
+      externalDocs:
+        description: Click here to see a detailed explanation of this endpoint requirements
+        url: >-
+          https://github.com/vecondev/buildoptima-api/blob/develop/docs/filtering-sorting.md
+      operationId: exportInCsv
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FetchNewsRequest'
+        required: true
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully exported news csv
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: There is an invalid value in fetch request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/news/csv"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/faq/questions:
+    get:
+      tags:
+        - FAQ Question
+      summary: Get all FAQ Questions
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 4043, 5007'
+      operationId: getAll
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The FAQ Questions should be retrieved
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQQuestionResponseDTO'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/faq/questions"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    post:
+      tags:
+        - FAQ Question
+      summary: Create new FAQ Question
+      description: >-
+        Possible error codes: 40011, 4011, 4012, 4013, 4014, 4031, 4042, 4044,
+        4095, 5007
+      operationId: create_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FAQQuestionRequestDTO'
+        required: true
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '201':
+          description: New FAQ Question should be created.
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQQuestionResponseDTO'
+        '400':
+          description: 'There is an invalid value in user input.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodArgumentNotValidResponse'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: There is no category OR user found with such id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: There already is an duplicate value for the question.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/faq/questions"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "409":
+            statusCode: "409"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/faq/questions/fetch:
+    post:
+      tags:
+        - FAQ Question
+      summary: 'Fetch filtered, sorted and paged '
+      description: >-
+        Possible error codes: 4002, 4003, 40014, 4011, 4012, 4013, 4014, 4031,
+        5007
+      externalDocs:
+        description: Click here to see a detailed explanation of this endpoint requirements
+        url: >-
+          https://github.com/vecondev/buildoptima-api/blob/develop/docs/filtering-sorting.md
+      operationId: fetch_2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FetchFaqQuestionsRequest'
+        required: true
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fetched results from DB
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchResponseDTO'
+        '400':
+          description: There is an invalid value in request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/faq/questions/fetch"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/faq/categories:
+    get:
+      tags:
+        - FAQ Category
+      summary: Get all FAQ categories
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 5007'
+      operationId: getAll_1
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All FAQ Categories should be retrieved
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQCategoryResponseDTO'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/faq/categories"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    post:
+      tags:
+        - FAQ Category
+      summary: Create new FAQ category
+      description: >-
+        Possible error codes: 40011, 4011, 4012, 4013, 4014, 4031, 4042, 4094,
+        5007
+      operationId: create_2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FAQCategoryRequestDTO'
+        required: true
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '201':
+          description: New FAQ category should be created.
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FAQCategoryResponseDTO'
+        '400':
+          description: 'There is an invalid value in user input.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodArgumentNotValidResponse'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found with such id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: There already is an duplicate value for category name.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/faq/categories"
+        responses:
+          "201":
+            statusCode: "201"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "409":
+            statusCode: "409"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/faq/categories/fetch:
+    post:
+      tags:
+        - FAQ Category
+      summary: 'Fetch filtered, sorted and paged '
+      description: >-
+        Possible error codes: 4002, 4003, 40014, 4011, 4012, 4013, 4014, 4031,
+        5007
+      externalDocs:
+        description: Click here to see a detailed explanation of this endpoint requirements
+        url: >-
+          https://github.com/vecondev/buildoptima-api/blob/develop/docs/filtering-sorting.md
+      operationId: fetch_3
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FetchFaqCategoriesRequest'
+        required: true
+      responses:
+        '200':
+          description: Fetched results from DB
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchResponseDTO'
+        '400':
+          description: There is an invalid value in request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/faq/categories/fetch"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/auth:
+    post:
+      tags:
+        - Authentication
+      summary: User sign in
+      description: 'Possible error codes: 40011, 4011'
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: User signed in
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponseDTO'
+        '400':
+          description: 'There is an invalid value in user input.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodArgumentNotValidResponse'
+        '401':
+          description: Bad credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/auth"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "500":
+            statusCode: "500"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/auth/verification:
+    post:
+      tags:
+        - Authentication
+      summary: Request to receive an email to restore the password
+      description: 'Possible error codes: 4042, 5001'
+      operationId: verify
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmEmailRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: Email was sent to user
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/auth/verification"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/auth/registration:
+    post:
+      tags:
+        - Authentication
+      summary: Register new user
+      description: 'Possible error codes: 40011, 4092, 4093, 5001'
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationRequestDTO'
+        required: true
+      responses:
+        '201':
+          description: New user should be registered.
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDTO'
+        '400':
+          description: 'There is an invalid value in user input.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodArgumentNotValidResponse'
+        '409':
+          description: >-
+            There already is an duplicate value either for email or phone
+            number.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/auth/registration"
+        responses:
+          "201":
+            statusCode: "201"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "409":
+            statusCode: "409"
+          "500":
+            statusCode: "500"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/auth/refreshment:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh tokens
+      description: 'Possible error codes: 40012, 40013'
+      operationId: refreshToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: New access token was created for user
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshTokenResponseDTO'
+        '400':
+          description: The refresh token is either not provided or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "POST"
+        uri: "{INTEGRATION_URL}/user/refreshment"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "500":
+            statusCode: "500"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/user/{id}:
+    get:
+      tags:
+        - User
+      summary: Get user profile
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 4042, 5007'
+      operationId: getById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fetched a user from DB
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDTO'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/user/{id}"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    patch:
+      tags:
+        - User
+      summary: |
+        Edit User info. If any field is not to be changed,
+        please provide the present user state
+      description: >-
+        Possible error codes: 4001, 40011, 4011, 4012, 4013, 4014, 4031, 4042,
+        4091,  5007
+      operationId: editUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditUserDTO'
+        required: true
+      responses:
+        '200':
+          description: User info successfully edited
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDTO'
+        '400':
+          description: 'There is an invalid value in user input.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodArgumentNotValidResponse'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "PATCH"
+        uri: "{INTEGRATION_URL}/user/{id}"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS,PATCH'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/news/{id}:
+    get:
+      tags:
+        - News
+      summary: Get news item by id
+      description: >
+        Possible error codes: 4011, 4012, 4013, 4014, 4031, 4046,  5007.
+
+        To get the uploaded image urls: original image url:
+        'https://buildoptima.s3.amazonaws.com/news/{user_id}/original/{version}'
+        thumbnail image url:
+        'https://buildoptima.s3.amazonaws.com/news/{user_id}/thumbnail/{version}'
+      operationId: getById_1
+      parameters:
+        - name: id
+          in: path
+          description: The news item id which should be fetched
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fetched news item from DB
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsResponseDTO'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: No News item found by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsResponseDTO'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/news/{id}"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    delete:
+      tags:
+        - News
+      summary: Delete news item
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 4046, 5007.'
+      operationId: delete
+      parameters:
+        - name: id
+          in: path
+          description: The news item id which should be deleted
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: News item has been deleted
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: There is no News item found by given id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "DELETE"
+        uri: "{INTEGRATION_URL}/news/{id}"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    patch:
+      tags:
+        - News
+      summary: Update news item
+      description: 'Possible error codes: 40011, 4011, 4012, 4013, 4014, 4031, 4046, 5007.'
+      operationId: update_2
+      parameters:
+        - name: id
+          in: path
+          description: The news item id which should be updated
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NewsUpdateRequestDTO'
+      responses:
+        '200':
+          description: Updated the news item
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsResponseDTO'
+        '400':
+          description: 'There is an invalid value in user input.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodArgumentNotValidResponse'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: News item not found by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "PATCH"
+        uri: "{INTEGRATION_URL}/news/{id}"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS,DELETE,PATCH'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/news/{id}/archive:
+    patch:
+      tags:
+        - News
+      summary: Archive news item
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 4046, 5007.'
+      operationId: archive
+      parameters:
+        - name: id
+          in: path
+          description: The news item id which should be archived
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully archived news item
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsResponseDTO'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: No News item found by given id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "PATCH"
+        uri: "{INTEGRATION_URL}/news/{id}/archive"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,PATCH'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/user/{id}/thumbnail-image:
+    get:
+      tags:
+        - User
+      summary: Download the thumbnail image by given id
+      description: >
+        Possible error codes: 4011, 4012, 4013, 4014, 4031, 4042, 4045, 5005,
+        5007.
+
+        The permission to download the image has only the resource owner and the
+        admin
+      operationId: downloadThumbnailImage
+      parameters:
+        - name: id
+          in: path
+          description: The user id whom image should be downloaded
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The image is successfully downloaded
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            image/jpeg: { }
+            image/png: { }
+            application/json: { }
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: The image or user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/user/{id}/thumbnail-image"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "404":
+            statusCode: "404"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.id: "method.request.path.id"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/user/me:
+    get:
+      tags:
+        - User
+      summary: Get current user
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 4042, 5007'
+      operationId: getCurrentUser
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fetched a user from DB
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDTO'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/user/me"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/properties/{ain}:
+    get:
+      tags:
+        - Property
+      summary: Get property data by ain
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 4049'
+      operationId: getByAin
+      parameters:
+        - name: ain
+          in: path
+          description: The property data ain which should be fetched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved property data by ain
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyResponseDTO'
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/properties/{ain}"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.ain: "method.request.path.ain"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      parameters:
+        - name: "ain"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/properties/search:
+    get:
+      tags:
+        - Property
+      summary: Search through properties by address or ain
+      description: |-
+        Each request can return up to 10 property info that are
+        more similar to the search criteria than other ones.
+        Possible error codes: 50014
+      operationId: search
+      parameters:
+        - name: value
+          in: query
+          description: The search criteria
+          required: true
+          schema:
+            type: string
+        - name: by
+          in: query
+          description: |-
+            Parameter to mention in which criteria
+            ('address' or 'ain') to search by
+          required: true
+          schema:
+            type: string
+            enum:
+              - ADDRESS
+              - AIN
+      responses:
+        '200':
+          description: The search has been successfully done
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityOverview'
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/properties/search"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "500":
+            statusCode: "500"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/properties/progress:
+    get:
+      tags:
+        - Property migration
+      summary: Track the migration progress
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 5007'
+      operationId: trackMigrationProgress
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The information about file migrations was got
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyMigrationProgressResponseDto'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/properties/progress"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/news/metadata:
+    get:
+      tags:
+        - News
+      summary: Get news metadata
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 5007.'
+      operationId: getMetadata
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully got news metadata
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceMetadata'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/news/metadata"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/faq/questions/metadata:
+    get:
+      tags:
+        - FAQ Question
+      summary: Get FAQ Question metadata
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 5007'
+      operationId: getMetadata_1
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The metadata should be got
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceMetadata'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/faq/questions/metadata"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/faq/questions/lookup/{status}/{dictionary}:
+    get:
+      tags:
+        - FAQ Question
+      summary: |-
+        Find all users who updated questions with given status,
+        or all categories that have questions with such status
+      description: 'Possible error codes: 4009, 4011, 4012, 4013, 4014, 4031, 5007'
+      operationId: lookup
+      parameters:
+        - name: status
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - ARCHIVED
+              - ACTIVE
+        - name: dictionary
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - UPDATED_BY
+              - CATEGORY
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The result should be successfully got
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityOverview'
+        '400':
+          description: Invalid dictionary field to lookup for
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityOverview'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/faq/questions/lookup/{status}/{dictionary}"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.path.dictionary: "method.request.path.dictionary"
+          integration.request.path.status: "method.request.path.status"
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      parameters:
+        - name: "status"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        - name: "dictionary"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/faq/questions/csv:
+    get:
+      tags:
+        - FAQ Question
+      summary: Exporting all FAQ questions in '.csv' format
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 5004, 5007'
+      operationId: exportInCsv_1
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All faq questions should be exported
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/csv: { }
+            application/json: { }
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/faq/questions/csv"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/faq/categories/metadata:
+    get:
+      tags:
+        - FAQ Category
+      summary: Get FAQ Category metadata
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 5007'
+      operationId: getMetadata_2
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The metadata should be got
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceMetadata'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/faq/categories/metadata"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /api/v1/faq/categories/csv:
+    get:
+      tags:
+        - FAQ Category
+      summary: Exporting all FAQ categories in '.csv' format
+      description: 'Possible error codes: 4011, 4012, 4013, 4014, 4031, 5004, 5007'
+      operationId: exportInCsv_2
+      parameters:
+        - name: authorities
+          in: header
+          schema:
+            type: string
+        - name: username
+          in: header
+          schema:
+            type: string
+        - name: user_id
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All faq categories should be exported
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/csv: { }
+            application/json: { }
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: |-
+            Authenticated user hasn't permission to deal with
+            these resources (Should be either MODERATOR or ADMIN)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - { AWS_LAMBDA_AUTHORIZER_NAME }: [ ]
+      x-amazon-apigateway-integration:
+        type: "http"
+        httpMethod: "GET"
+        uri: "{INTEGRATION_URL}/faq/categories/csv"
+        responses:
+          "200":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          "400":
+            statusCode: "400"
+          "401":
+            statusCode: "401"
+          "403":
+            statusCode: "403"
+          "500":
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.username: "context.authorizer.username"
+          integration.request.header.user_id: "context.authorizer.user_id"
+          integration.request.header.authorities: "context.authorizer.authorities"
+        passthroughBehavior: "when_no_match"
+    options:
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+components:
+  schemas:
+    Empty:
+      type: "object"
+      title: "Empty Schema"
+    ChangePasswordRequestDTO:
+      required:
+        - newPassword
+        - oldPassword
+      type: object
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          maxLength: 32
+          minLength: 8
+          type: string
+          description: >-
+            User's password: should have valid password format, at least one
+            uppercase character, one lowercase character, one digit, one special
+            symbol and no whitespaces!
+          example: Example1234.
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Http response status
+          example: CONFLICT
+          enum:
+            - 100 CONTINUE
+            - 101 SWITCHING_PROTOCOLS
+            - 102 PROCESSING
+            - 103 CHECKPOINT
+            - 200 OK
+            - 201 CREATED
+            - 202 ACCEPTED
+            - 203 NON_AUTHORITATIVE_INFORMATION
+            - 204 NO_CONTENT
+            - 205 RESET_CONTENT
+            - 206 PARTIAL_CONTENT
+            - 207 MULTI_STATUS
+            - 208 ALREADY_REPORTED
+            - 226 IM_USED
+            - 300 MULTIPLE_CHOICES
+            - 301 MOVED_PERMANENTLY
+            - 302 FOUND
+            - 302 MOVED_TEMPORARILY
+            - 303 SEE_OTHER
+            - 304 NOT_MODIFIED
+            - 305 USE_PROXY
+            - 307 TEMPORARY_REDIRECT
+            - 308 PERMANENT_REDIRECT
+            - 400 BAD_REQUEST
+            - 401 UNAUTHORIZED
+            - 402 PAYMENT_REQUIRED
+            - 403 FORBIDDEN
+            - 404 NOT_FOUND
+            - 405 METHOD_NOT_ALLOWED
+            - 406 NOT_ACCEPTABLE
+            - 407 PROXY_AUTHENTICATION_REQUIRED
+            - 408 REQUEST_TIMEOUT
+            - 409 CONFLICT
+            - 410 GONE
+            - 411 LENGTH_REQUIRED
+            - 412 PRECONDITION_FAILED
+            - 413 PAYLOAD_TOO_LARGE
+            - 413 REQUEST_ENTITY_TOO_LARGE
+            - 414 URI_TOO_LONG
+            - 414 REQUEST_URI_TOO_LONG
+            - 415 UNSUPPORTED_MEDIA_TYPE
+            - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+            - 417 EXPECTATION_FAILED
+            - 418 I_AM_A_TEAPOT
+            - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+            - 420 METHOD_FAILURE
+            - 421 DESTINATION_LOCKED
+            - 422 UNPROCESSABLE_ENTITY
+            - 423 LOCKED
+            - 424 FAILED_DEPENDENCY
+            - 425 TOO_EARLY
+            - 426 UPGRADE_REQUIRED
+            - 428 PRECONDITION_REQUIRED
+            - 429 TOO_MANY_REQUESTS
+            - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+            - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+            - 500 INTERNAL_SERVER_ERROR
+            - 501 NOT_IMPLEMENTED
+            - 502 BAD_GATEWAY
+            - 503 SERVICE_UNAVAILABLE
+            - 504 GATEWAY_TIMEOUT
+            - 505 HTTP_VERSION_NOT_SUPPORTED
+            - 506 VARIANT_ALSO_NEGOTIATES
+            - 507 INSUFFICIENT_STORAGE
+            - 508 LOOP_DETECTED
+            - 509 BANDWIDTH_LIMIT_EXCEEDED
+            - 510 NOT_EXTENDED
+            - 511 NETWORK_AUTHENTICATION_REQUIRED
+        errorCode:
+          type: integer
+          description: The exception description
+          format: int32
+          example: 4121
+        timestamp:
+          type: string
+          description: Timestamp showing when the error occurred
+          format: date-time
+        message:
+          type: string
+          description: Error message
+          example: There is an user registered with such an email!
+    FAQQuestionRequestDTO:
+      required:
+        - answer
+        - faqCategoryId
+        - question
+        - status
+      type: object
+      properties:
+        question:
+          title: Question
+          maxLength: 300
+          minLength: 2
+          type: string
+          description: Question's length should be between 2 and 300.
+          example: How can I recover my password?
+        answer:
+          title: Answer
+          maxLength: 300
+          minLength: 2
+          type: string
+          description: Answer's length should be between 2 and 300.
+          example: |-
+            Click 'Forgot password' button inside the 'Sign up' form
+            and write your email address in order to recover the account.
+        status:
+          title: Resource status
+          type: string
+          description: Shows if the question is active or archived.
+          example: ACTIVE
+          enum:
+            - ARCHIVED
+            - ACTIVE
+        faqCategoryId:
+          title: Category Id
+          type: string
+          format: uuid
+          example: 2635b586-d0d7-4a2d-b4b5-c98377a02322
+    EntityOverview:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 2635b586-d0d7-4a2d-b4b5-c98377a02322
+        name:
+          type: string
+          example: Royalties & Statements
+    FAQQuestionResponseDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 2635b586-d0d7-4a2d-b4b5-c98377a02322
+        question:
+          type: string
+          example: How can I recover my password?
+        answer:
+          type: string
+          example: |-
+            Click 'Forgot password' button inside the 'Sign up' form and
+            write your email address in order to recover the account.
+        status:
+          type: string
+          example: ACTIVE
+          enum:
+            - ARCHIVED
+            - ACTIVE
+        category:
+          $ref: '#/components/schemas/EntityOverview'
+        updatedBy:
+          $ref: '#/components/schemas/EntityOverview'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    FAQCategoryRequestDTO:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          title: Faq category name
+          maxLength: 50
+          minLength: 2
+          type: string
+          description: Name's length should be between 2 and 50.
+          example: Royalties & Statements
+    FAQCategoryResponseDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 2635b586-d0d7-4a2d-b4b5-c98377a02322
+        name:
+          type: string
+          example: Royalties & Statements
+        updatedBy:
+          $ref: '#/components/schemas/EntityOverview'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    RestorePasswordRequestDTO:
+      required:
+        - confirmationToken
+        - newPassword
+      type: object
+      properties:
+        confirmationToken:
+          type: string
+          example: 2635b586-d0d7-4a2d-b4b5-c98377a02322
+        newPassword:
+          maxLength: 32
+          minLength: 8
+          type: string
+          description: >-
+            User's password: should have valid password format, at least one
+            uppercase character, one lowercase character, one digit, one special
+            symbol and no whitespaces!
+          example: Example1234.
+    UserResponseDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 2635b586-d0d7-4a2d-b4b5-c98377a02322
+        imageVersion:
+          type: integer
+          format: int32
+          example: 2
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Smith
+        phone:
+          type: string
+          example: '+37477123456'
+        email:
+          type: string
+          example: example@mail.ru
+        role:
+          type: string
+          example: CLIENT
+          enum:
+            - ADMIN
+            - MODERATOR
+            - CLIENT
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ImageOverview:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 2635b586-d0d7-4a2d-b4b5-c98377a02322
+        imageVersion:
+          type: integer
+          format: int32
+          example: 2
+    FetchRequestDTO:
+      type: object
+      properties:
+        filter:
+          type: object
+          additionalProperties:
+            type: object
+        skip:
+          type: integer
+          format: int32
+        take:
+          type: integer
+          format: int32
+        sort:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sort'
+    Sort:
+      required:
+        - field
+        - order
+      type: object
+      properties:
+        field:
+          type: string
+        order:
+          type: string
+          enum:
+            - asc
+            - desc
+    FetchResponseDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            type: object
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        last:
+          type: boolean
+    PropertyReprocessResponseDTO:
+      type: object
+      properties:
+        allSuccessfullyReprocessedFiles:
+          type: integer
+          description: All files' count that have been re-processed during this request.
+          format: int32
+          example: 3
+        allFailedFilesToProcess:
+          type: object
+          additionalProperties:
+            type: string
+            description: >-
+              All file names that have been re-failed while re-processing and
+              it's failure reasons.
+            example: '{"116.json.gz":"Not in GZIP format."}'
+          description: >-
+            All file names that have been re-failed while re-processing and it's
+            failure reasons.
+          example:
+            116.json.gz: Not in GZIP format.
+    PropertyMigrationResponseDTO:
+      type: object
+      properties:
+        allProcessedFiles:
+          type: integer
+          description: All files' count that have been processed.
+          format: int32
+          example: 4
+        allFailedFilesToProcess:
+          type: object
+          additionalProperties:
+            type: string
+            description: >-
+              All file names that have been failed while processing and it's
+              failure reasons.
+            example: '{"116.json.gz":"Not in GZIP format."}'
+          description: >-
+            All file names that have been failed while processing and it's
+            failure reasons.
+          example:
+            116.json.gz: Not in GZIP format.
+        lastProcessedFiles:
+          type: integer
+          description: All files' count that were processed during this request.
+          format: int32
+          example: 2
+        lastSuccessfullyProcessedFiles:
+          type: integer
+          description: >-
+            All files' count that were successfully processed during this
+            request.
+          format: int32
+          example: 1
+        allProcessedProperties:
+          type: integer
+          description: All properties' count that have been migrated
+          format: int32
+    NewsCreationRequestDTO:
+      required:
+        - category
+        - description
+        - summary
+        - title
+      type: object
+      properties:
+        title:
+          title: News title
+          minLength: 5
+          type: string
+          description: Title length must be between 5 and 20 characters
+          example: Summer Sales
+        summary:
+          title: News Short Summary
+          minLength: 20
+          type: string
+          description: Summary length must be between 25 and 50 characters
+          example: Steam Summer Sale 2022 continues — save big on top rated PC games
+        keywords:
+          title: News Keywords
+          type: array
+          items:
+            title: News Keywords
+            type: string
+        description:
+          title: News Description
+          minLength: 50
+          type: string
+          description: Description length must be between 50 and 250 characters
+        category:
+          title: News Category
+          type: string
+          description: The category should be chosen by user while adding news item
+        image:
+          type: string
+          format: binary
+    AuthenticationRequestDTO:
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+          example: example@gmail.com
+        password:
+          type: string
+          example: Example1234.
+    AuthenticationResponseDTO:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        imageVersion:
+          type: integer
+          format: int32
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+    ConfirmEmailRequestDTO:
+      required:
+        - email
+      type: object
+      properties:
+        email:
+          title: User's email
+          type: string
+          description: Should have valid email format
+          example: example@gmail.com
+    UserRegistrationRequestDTO:
+      required:
+        - email
+        - firstName
+        - lastName
+        - password
+        - phone
+      type: object
+      properties:
+        firstName:
+          title: User's first name
+          maxLength: 20
+          minLength: 2
+          pattern: ^[A-Za-z]{2,20}$
+          type: string
+          description: >-
+            Name's length should be between 2 and 20 and name should contain
+            only letters.
+          example: John
+        lastName:
+          title: User's last name
+          maxLength: 20
+          minLength: 2
+          pattern: ^[A-Za-z]{2,20}$
+          type: string
+          description: >-
+            Lastname's length should be between 2 and 20 and lastname should
+            contain only letters.
+          example: Smith
+        phone:
+          title: User's phone number
+          maxLength: 15
+          minLength: 11
+          pattern: ^[+]{1}[0-9]{10,14}$
+          type: string
+          description: >-
+            Phone number should start with '+' character and have 10 up to 14
+            numbers after it.
+          example: '+37477123456'
+        email:
+          title: User's email
+          type: string
+          description: Should have valid email format
+          example: example@gmail.com
+        password:
+          title: User's password
+          maxLength: 32
+          minLength: 8
+          type: string
+          description: >-
+            User's password: should have valid password format, at least one
+            uppercase character, one lowercase character, one digit, one special
+            symbol and no whitespaces!
+          example: Example1234.
+    RefreshTokenRequestDTO:
+      required:
+        - refreshToken
+      type: object
+      properties:
+        refreshToken:
+          type: string
+    RefreshTokenResponseDTO:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+    EditUserDTO:
+      required:
+        - email
+        - firstName
+        - lastName
+        - phone
+      type: object
+      properties:
+        firstName:
+          title: User's first name
+          maxLength: 20
+          minLength: 2
+          pattern: ^[A-Za-z]{2,20}$
+          type: string
+          description: >-
+            Name's length should be between 2 and 20 and name should contain
+            only letters.
+          example: John
+        lastName:
+          title: User's last name
+          maxLength: 20
+          minLength: 2
+          pattern: ^[A-Za-z]{2,20}$
+          type: string
+          description: >-
+            Lastname's length should be between 2 and 20 and lastname should
+            contain only letters.
+          example: Smith
+        email:
+          title: User's email
+          type: string
+          description: Should have valid email format
+          example: example@gmail.com
+        phone:
+          title: User's phone number
+          maxLength: 15
+          minLength: 11
+          pattern: ^[+]{1}[0-9]{10,14}$
+          type: string
+          description: >-
+            Phone number should start with '+' character and have 10 up to 14
+            numbers after it.
+          example: '+37477123456'
+    NewsUpdateRequestDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        summary:
+          type: string
+        keywords:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        category:
+          type: string
+        image:
+          type: string
+          format: binary
+    NewsResponseDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        summary:
+          type: string
+        description:
+          type: string
+        keywords:
+          type: array
+          items:
+            type: string
+        category:
+          type: string
+          enum:
+            - BREAKING_NEWS
+            - ENTERTAINMENT
+            - INVESTIGATIVE
+            - OPINION
+        status:
+          type: string
+          enum:
+            - ARCHIVED
+            - ACTIVE
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        createdBy:
+          $ref: '#/components/schemas/EntityOverview'
+        updatedBy:
+          $ref: '#/components/schemas/EntityOverview'
+        imageVersion:
+          type: integer
+          format: int32
+    AddressDto:
+      type: object
+      properties:
+        houseNumber:
+          type: string
+        fraction:
+          type: string
+        direction:
+          type: string
+        streetName:
+          type: string
+        streetSuffix:
+          type: string
+        streetSuffixDirection:
+          type: string
+        unit:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+        primary:
+          type: boolean
+    Building:
+      type: object
+      properties:
+        buildType:
+          type: string
+        yearBuilt:
+          type: integer
+          format: int32
+        floorArea:
+          type: number
+          format: double
+        bedrooms:
+          type: integer
+          format: int32
+        bathrooms:
+          type: integer
+          format: int32
+        lastRemodeled:
+          type: integer
+          format: int32
+    Cases:
+      type: object
+      properties:
+        cityPlanningCases:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        environmentalCases:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        ordinances:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        ziReports:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        zoningAdminCases:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        otherCases:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    Centroid:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+    Coordinate:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+    Details:
+      type: object
+      properties:
+        land:
+          $ref: '#/components/schemas/Land'
+        buildings:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Building'
+        improvements:
+          $ref: '#/components/schemas/Improvements'
+    EdgesLabel:
+      type: object
+      properties:
+        label:
+          type: string
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+    FireRelated:
+      type: object
+      properties:
+        veryHighFireHazardSeverityZone:
+          type: string
+        fireBrushClearanceZone:
+          type: string
+        fireHydrant:
+          type: string
+    GeneralInformation:
+      type: object
+      properties:
+        lotArea:
+          type: string
+        usableLotArea:
+          type: string
+        zoneCodes:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        heightDistrict:
+          type: string
+        specificPlanAreaNames:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        supplementalUseDistricts:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        generalPlanLandUse:
+          type: string
+        coastalZone:
+          type: string
+        environmentallySensitiveArea:
+          type: string
+    Hazards:
+      type: object
+      properties:
+        seismicHazards:
+          $ref: '#/components/schemas/SeismicHazards'
+        naturalHazards:
+          $ref: '#/components/schemas/NaturalHazards'
+        otherHazards:
+          $ref: '#/components/schemas/OtherHazards'
+    HillsideInformation:
+      type: object
+      properties:
+        hillsideGradingArea:
+          type: string
+        hillsideOrdinanceArea:
+          type: string
+        hillsideConstructionRegulations:
+          type: string
+        hillsideMountainousArea:
+          type: string
+    HistoricDesignations:
+      type: object
+      properties:
+        historicPreservationZoneName:
+          type: string
+        historicMonumentName:
+          type: string
+    Improvements:
+      type: object
+      properties:
+        sewerAvailability:
+          $ref: '#/components/schemas/SewerAvailability'
+        swimmingPool:
+          type: string
+        solarPanel:
+          type: string
+        otherImprovements:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    Land:
+      type: object
+      properties:
+        lotUse:
+          type: string
+        buildingType:
+          type: string
+        lotArea:
+          type: number
+          format: double
+        zoningCodes:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        pue:
+          type: string
+        horseLot:
+          type: string
+    Locations:
+      type: object
+      properties:
+        centroid:
+          $ref: '#/components/schemas/Centroid'
+        polygons:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Polygon'
+    NaturalHazards:
+      type: object
+      properties:
+        veryHighFireHazardSeverityZone:
+          type: string
+        highWindArea:
+          type: string
+        floodZone:
+          type: string
+        coastalZone:
+          type: string
+        methaneProducingLandfill:
+          type: string
+    NearestTransit:
+      type: object
+      properties:
+        distanceToNearestBusStopInMi:
+          type: number
+          format: double
+        nearestBusStopCoordinate:
+          type: string
+        distanceToNearestMetroStationInMi:
+          type: number
+          format: double
+        nearestMetroStationCoordinate:
+          type: string
+    OtherHazards:
+      type: object
+      properties:
+        airportInfluenceArea:
+          type: string
+        aviationNoise:
+          type: string
+        freewayHazard:
+          type: string
+        railNoise:
+          type: string
+        highVoltageLineWithinRange:
+          type: string
+        highVoltageLineProximityInFt:
+          type: integer
+          format: int32
+        highVoltageLineType:
+          type: string
+        highVoltageLineValueInKiloVoltage:
+          type: integer
+          format: int32
+    Polygon:
+      type: object
+      properties:
+        coordinates:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Coordinate'
+        edgesLabels:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/EdgesLabel'
+    PropertyResponseDTO:
+      type: object
+      properties:
+        ain:
+          type: string
+        municipality:
+          type: string
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressDto'
+        locations:
+          $ref: '#/components/schemas/Locations'
+        details:
+          $ref: '#/components/schemas/Details'
+        hazards:
+          $ref: '#/components/schemas/Hazards'
+        zoningDetails:
+          $ref: '#/components/schemas/ZoningDetails'
+        version:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    SeismicHazards:
+      type: object
+      properties:
+        nearActiveFaultName:
+          type: string
+        nearActiveFaultDistance:
+          type: integer
+          format: int32
+        alquistPrioloFaultZone:
+          type: string
+        landslide:
+          type: string
+        liquefaction:
+          type: string
+    SewerAvailability:
+      type: object
+      properties:
+        isSewerAvailable:
+          type: boolean
+        sewerWyeMapFilename:
+          type: string
+        sewerConnectedInfo:
+          type: string
+    SpecialConditions:
+      type: object
+      properties:
+        buildingLine:
+          type: string
+        tcondition:
+          type: string
+        dlimitation:
+          type: string
+        qcondition:
+          type: string
+    ZoningDetails:
+      type: object
+      properties:
+        generalInformation:
+          $ref: '#/components/schemas/GeneralInformation'
+        specialConditions:
+          $ref: '#/components/schemas/SpecialConditions'
+        hillsideInformation:
+          $ref: '#/components/schemas/HillsideInformation'
+        historicDesignations:
+          $ref: '#/components/schemas/HistoricDesignations'
+        nearestTransit:
+          $ref: '#/components/schemas/NearestTransit'
+        fireRelated:
+          $ref: '#/components/schemas/FireRelated'
+        cases:
+          $ref: '#/components/schemas/Cases'
+    PropertyMigrationProgressResponseDto:
+      type: object
+      properties:
+        allProcessedFiles:
+          type: integer
+          description: All files' count that have been processed.
+          format: int32
+          example: 4
+        allFailedFilesToProcess:
+          type: object
+          additionalProperties:
+            type: string
+            description: >-
+              All file names that have been failed while processing and it's
+              failure reasons.
+            example: '{"116.json.gz":"Not in GZIP format."}'
+          description: >-
+            All file names that have been failed while processing and it's
+            failure reasons.
+          example:
+            116.json.gz: Not in GZIP format.
+        allProcessedProperties:
+          type: integer
+          description: All properties' count that have been migrated
+          format: int32
+    ResourceMetadata:
+      type: object
+      properties:
+        lastUpdatedAt:
+          type: string
+          format: date-time
+        lastUpdatedBy:
+          $ref: '#/components/schemas/EntityOverview'
+        allActiveCount:
+          type: integer
+          format: int64
+          example: 15
+        allArchivedCount:
+          type: integer
+          format: int64
+          example: 5
+    MethodArgumentNotValidResponse:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The error code
+          format: int32
+          example: 4121
+        status:
+          type: string
+          description: HTTP response status
+          example: BAD_REQUEST
+        timestamp:
+          type: object
+          description: |-
+            Timestamp showing when
+            the error occurred
+          example: '2022-09-22T10:55:35.722823753'
+        message:
+          type: string
+          description: The error message
+          example: Invalid field in fetch request.
+        errors:
+          $ref: "#/components/schemas/Errors"
+    Errors:
+      type: object
+      properties:
+        name:
+          type: string
+          example: |-
+            The length should be between
+            2 and 20 characters!
+        password:
+          type: string
+          example: |-
+            Invalid password! The password
+            should have 8 up to 32 characters
+            at least one uppercase character,
+            one lowercase character, one digit,
+            one special symbol and no whitespaces!
+    FetchUsersRequest:
+      type: object
+      properties:
+        skip:
+          type: integer
+          format: int32
+          example: 0
+        take:
+          type: integer
+          format: int32
+          example: 10
+        sort:
+          $ref: "#/components/schemas/Sort"
+        filter:
+          type: object
+          example: >-
+            {    "and":
+            [      {        "operation": "eq",        "name":
+            "firstName",        "value": "John"      },      {        "or":
+            [          {            "operation": "like",            "name":
+            "lastName",            "value": "ith"          },         
+            {            "operation": "gt",            "name":
+            "createdAt",            "value":
+            "2018-11-30T18:35:24.00Z"          }        ]      }    ]  }
+    FetchFaqCategoriesRequest:
+      type: object
+      properties:
+        skip:
+          type: integer
+          format: int32
+          example: 0
+        take:
+          type: integer
+          format: int32
+          example: 10
+        sort:
+          $ref: "#/components/schemas/Sort"
+        filter:
+          type: object
+          example: >-
+            {"and": [     
+            {        "operation": "eq",        "name": "name",        "value":
+            "Royalties"      },      {        "or": [          {           
+            "operation": "gt",            "name": "updatedAt",           
+            "value": "2018-11-30T18:35:24.00Z"          },         
+            {            "operation": "gt",            "name":
+            "createdAt",            "value":
+            "2018-11-30T18:35:24.00Z"          }        ]      }    ]  }
+    FetchFaqQuestionsRequest:
+      type: object
+      properties:
+        skip:
+          type: integer
+          format: int32
+          example: 0
+        take:
+          type: integer
+          format: int32
+          example: 10
+        sort:
+          $ref: "#/components/schemas/Sort"
+        filter:
+          type: object
+          example: >-
+            {    "and":
+            [      {        "operation": "eq",        "name": "status",       
+            "value": "ACTIVE"      },      {        "or": [         
+            {            "operation": "like",            "name":
+            "question",            "value": "how"          },         
+            {            "operation": "gt",            "name":
+            "createdAt",            "value":
+            "2018-11-30T18:35:24.00Z"          }        ]      }    ]  }
+    FetchNewsRequest:
+      type: object
+      properties:
+        skip:
+          type: integer
+          format: int32
+          example: 0
+        take:
+          type: integer
+          format: int32
+          example: 10
+        sort:
+          $ref: "#/components/schemas/Sort"
+        filter:
+          type: object
+          example: >-
+            {    "and":
+            [      {        "operation": "like",        "name":
+            "title",        "value": "Summer Sales"      },      {       
+            "or": [          {            "operation": "eq",           
+            "name": "category",            "value": "BREAKING_NEWS"         
+            },          {            "operation": "gt",            "name":
+            "createdAt",            "value":
+            "2018-11-30T18:35:24.00Z"          }        ]      }    ]  }
+  securitySchemes:
+    { AWS_LAMBDA_AUTHORIZER_NAME }:
+      type: "apiKey"
+      name: "{AUTHORIZATION_TOKEN_SOURCE_NAME}"
+      in: "{AUTHORIZATION_TOKEN_SOURCE}"
+      x-amazon-apigateway-authtype: "custom"
+      x-amazon-apigateway-authorizer:
+        type: "token"
+        authorizerUri: "{AWS_LAMBDA_AUTHORIZER_URI}"
+        authorizerResultTtlInSeconds: 300

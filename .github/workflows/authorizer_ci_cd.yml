@@ -2,17 +2,17 @@ name: Authorizer CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
     paths: 
-      - 'authorizer/**'
+      - 'buildoptima-serverless-authorizer/**'
       - 'pom.xml'
 
 jobs:
-  build_deploy:
+  build_upload:
     uses: ./.github/workflows/ci_cd.yml
     with:
-      application_name: authorizer
+      application_name: buildoptima-serverless-authorizer
       application_jar_name: authorizer-0.0.1-SNAPSHOT.jar
-      aws_s3_bucket_name: buildoptima-authorizer
-      aws_lambda_authorizer_name: Buildoptima_authorization
+      aws_s3_folder_name: authorizer
+      aws_lambda_authorizer_name: buildoptima-authorizer-lambda
     secrets: inherit

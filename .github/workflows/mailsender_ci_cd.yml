@@ -1,0 +1,18 @@
+name: Mailsender CI/CD
+
+on:
+  push:
+    branches: [ "develop" ]
+    paths:
+      - 'buildoptima-serverless-mailsender/**'
+      - 'pom.xml'
+
+jobs:
+  build_upload:
+    uses: ./.github/workflows/ci_cd.yml
+    with:
+      application_name: buildoptima-serverless-mailsender
+      application_jar_name: mailsender-0.0.1-SNAPSHOT.jar
+      aws_s3_folder_name: mailsender
+      aws_lambda_authorizer_name: buildoptima-mailsender-lambda
+    secrets: inherit

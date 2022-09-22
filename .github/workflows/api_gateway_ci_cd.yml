@@ -1,0 +1,86 @@
+name: ApiGateway CI/CD
+
+on:
+  push:
+    branches: [ "develop" ]
+    paths:
+      - 'tools/cloudformation/apigateway/**'
+
+env:
+  AWS_S3_BUCKET_NAME_API_GATEWAY: buildoptima-apigateway
+  AWS_S3_BUCKET_NAME_WEB: buildoptima-documentation
+  AWS_S3_DOCS_FOLDER_NAME: docs
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_API_GATEWAY_REST_API_NAME: BUILDOPTIMA_API
+  AWS_API_GATEWAY_DEV_STAGE_NAME: dev
+  AWS_API_GATEWAY_RESOURCE_LOGICAL_ID: ApiGateway
+  AWS_API_GATEWAY_DEPLOYMENT_RESOURCE_LOGICAL_ID_PREFIX: ApiGatewayDeployment
+  AWS_API_GATEWAY_UNAUTHORIZED_RESPONSE_RESOURCE_LOGICAL_ID_PREFIX: ApiGatewayUnauthorizedResponse
+  AWS_API_GATEWAY_ACCESS_DENIED_RESPONSE_RESOURCE_LOGICAL_ID_PREFIX: ApiGatewayAccessDeniedResponse
+  AWS_API_GATEWAY_MISSING_AUTHENTICATION_TOKEN_RESPONSE_RESOURCE_LOGICAL_ID_PREFIX: ApiGatewayMissingAuthenticationTokenResponse
+  AWS_LAMBDA_AUTHORIZER_NAME: buildoptima-authorizer-lambda
+  AWS_EC2_INSTANCE_URL: http://ec2-18-207-208-157.compute-1.amazonaws.com/api/v1
+  AWS_CLOUDFORMATION_STACK_NAME: buildoptima-cloudformation-stack
+  OPENAPI_FILE_NAME: openapi
+  OPENAPI_FILE_EXTENSION: .yaml
+  CLOUDFORMATION_FILE_NAME: cloudformation-apigateway
+  CLOUDFORMATION_FILE_EXTENSION: .yaml
+  AUTHORIZATION_TOKEN_SOURCE_NAME: Authorization
+  AUTHORIZATION_TOKEN_SOURCE: header
+
+jobs:
+  build_deploy:
+    name: Build & Upload To Lambda
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Update/Create Api Gateway With API Documentation
+        run: |
+          cd tools/cloudformation/apigateway
+          AWS_API_GATEWAY_DEPLOYMENT_RESOURCE_NEXT_LOGICAL_ID="$AWS_API_GATEWAY_DEPLOYMENT_RESOURCE_LOGICAL_ID_PREFIX$GITHUB_SHA"
+          AWS_API_GATEWAY_UNAUTHORIZED_RESPONSE_RESOURCE_NEXT_LOGICAL_ID="$AWS_API_GATEWAY_UNAUTHORIZED_RESPONSE_RESOURCE_LOGICAL_ID_PREFIX$GITHUB_SHA"
+          AWS_API_GATEWAY_ACCESS_DENIED_RESPONSE_RESOURCE_NEXT_LOGICAL_ID="$AWS_API_GATEWAY_ACCESS_DENIED_RESPONSE_RESOURCE_LOGICAL_ID_PREFIX$GITHUB_SHA"
+          AWS_API_GATEWAY_MISSING_AUTHENTICATION_TOKEN_RESPONSE_RESOURCE_NEXT_LOGICAL_ID="$AWS_API_GATEWAY_MISSING_AUTHENTICATION_TOKEN_RESPONSE_RESOURCE_LOGICAL_ID_PREFIX$GITHUB_SHA"
+          AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" | awk '{print substr($0, 2, length($0) - 2)}')
+          AUTHORIZER_URI="arn:aws:apigateway:$AWS_DEFAULT_REGION:lambda:path/2015-03-31/functions/arn:aws:lambda:$AWS_DEFAULT_REGION:$AWS_ACCOUNT_ID:function:$AWS_LAMBDA_AUTHORIZER_NAME/invocations"
+          OPENAPI_FILE="$OPENAPI_FILE_NAME$OPENAPI_FILE_EXTENSION"
+          CLOUDFORMATION_FILE="$CLOUDFORMATION_FILE_NAME$CLOUDFORMATION_FILE_EXTENSION"
+          S3_OPENAPI_FILE="$OPENAPI_FILE_NAME-$GITHUB_SHA$OPENAPI_FILE_EXTENSION"
+          find $OPENAPI_FILE -exec sed -i "s#{AWS_LAMBDA_AUTHORIZER_URI}#$AUTHORIZER_URI#g" {} \;
+          find $OPENAPI_FILE -exec sed -i "s#{AUTHORIZATION_TOKEN_SOURCE}#$AUTHORIZATION_TOKEN_SOURCE#g" {} \;
+          find $OPENAPI_FILE -exec sed -i "s#{AUTHORIZATION_TOKEN_SOURCE_NAME}#$AUTHORIZATION_TOKEN_SOURCE_NAME#g" {} \;
+          find $OPENAPI_FILE -exec sed -i "s#{ AWS_LAMBDA_AUTHORIZER_NAME }#$AWS_LAMBDA_AUTHORIZER_NAME#g" {} \;
+          find $OPENAPI_FILE -exec sed -i "s#{INTEGRATION_URL}#$AWS_EC2_INSTANCE_URL#g" {} \;
+          aws s3 cp $OPENAPI_FILE s3://$AWS_S3_BUCKET_NAME_API_GATEWAY/$AWS_S3_DOCS_FOLDER_NAME/$S3_OPENAPI_FILE 
+          find $CLOUDFORMATION_FILE -exec sed -i "s#$AWS_API_GATEWAY_DEPLOYMENT_RESOURCE_LOGICAL_ID_PREFIX?#$AWS_API_GATEWAY_DEPLOYMENT_RESOURCE_NEXT_LOGICAL_ID#g" {} \;
+          find $CLOUDFORMATION_FILE -exec sed -i "s#$AWS_API_GATEWAY_UNAUTHORIZED_RESPONSE_RESOURCE_LOGICAL_ID_PREFIX?#$AWS_API_GATEWAY_UNAUTHORIZED_RESPONSE_RESOURCE_NEXT_LOGICAL_ID#g" {} \;
+          find $CLOUDFORMATION_FILE -exec sed -i "s#$AWS_API_GATEWAY_ACCESS_DENIED_RESPONSE_RESOURCE_LOGICAL_ID_PREFIX?#$AWS_API_GATEWAY_ACCESS_DENIED_RESPONSE_RESOURCE_NEXT_LOGICAL_ID#g" {} \;
+          find $CLOUDFORMATION_FILE -exec sed -i "s#$AWS_API_GATEWAY_MISSING_AUTHENTICATION_TOKEN_RESPONSE_RESOURCE_LOGICAL_ID_PREFIX?#$AWS_API_GATEWAY_MISSING_AUTHENTICATION_TOKEN_RESPONSE_RESOURCE_NEXT_LOGICAL_ID#g" {} \;
+          CLOUDFORMATION_ACTION="update-stack"
+          if ! aws cloudformation describe-stacks --region $AWS_DEFAULT_REGION --stack-name $AWS_CLOUDFORMATION_STACK_NAME; then
+          CLOUDFORMATION_ACTION="create-stack"
+          fi
+          aws cloudformation $CLOUDFORMATION_ACTION --stack-name $AWS_CLOUDFORMATION_STACK_NAME --template-body file://$CLOUDFORMATION_FILE_NAME$CLOUDFORMATION_FILE_EXTENSION \
+            --parameters ParameterKey=RestApiName,ParameterValue=$AWS_API_GATEWAY_REST_API_NAME ParameterKey=S3BucketName,ParameterValue=$AWS_S3_BUCKET_NAME_API_GATEWAY \
+            ParameterKey=S3ApiGatewayDocFileKey,ParameterValue=$AWS_S3_DOCS_FOLDER_NAME/$S3_OPENAPI_FILE ParameterKey=AuthorizationHeaderName,ParameterValue=$AUTHORIZATION_TOKEN_SOURCE_NAME \
+            ParameterKey=LambdaAuthorizerName,ParameterValue=$AWS_LAMBDA_AUTHORIZER_NAME ParameterKey=ApiGatewayAwsRegion,ParameterValue=$AWS_DEFAULT_REGION \
+            ParameterKey=ApiGatewayStageName,ParameterValue=$AWS_API_GATEWAY_DEV_STAGE_NAME
+      - name: Upload Openapi Docs To S3
+        run: |
+          sudo snap install yq
+          OPENAPI_FILE="$OPENAPI_FILE_NAME$OPENAPI_FILE_EXTENSION"
+          API_GATEWAY_PHYSICAL_ID=$(aws cloudformation describe-stack-resource --stack-name $AWS_CLOUDFORMATION_STACK_NAME \
+            --logical-resource-id $AWS_API_GATEWAY_RESOURCE_LOGICAL_ID | jq '.StackResourceDetail.PhysicalResourceId' | awk '{print substr($0, 2, length($0) - 2)}')
+          API_GATEWAY_URL="https://$API_GATEWAY_PHYSICAL_ID.execute-api.$AWS_DEFAULT_REGION.amazonaws.com/$AWS_API_GATEWAY_DEV_STAGE_NAME"
+          cd tools/cloudformation/apigateway
+          URL="$API_GATEWAY_URL" yq '.servers[0].url=env(URL)' -i $OPENAPI_FILE
+          yq 'del(.paths[].options)' -i $OPENAPI_FILE
+          mv openapi.html index.html
+          aws s3 cp $OPENAPI_FILE s3://$AWS_S3_BUCKET_NAME_WEB
+          aws s3 cp index.html s3://$AWS_S3_BUCKET_NAME_WEB

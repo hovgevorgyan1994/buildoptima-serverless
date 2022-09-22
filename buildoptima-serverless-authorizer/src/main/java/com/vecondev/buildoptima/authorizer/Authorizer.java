@@ -1,5 +1,6 @@
 package com.vecondev.buildoptima.authorizer;
 
+import static com.vecondev.buildoptima.authorizer.ConfigProperties.AUTHORIZATION_HEADER_PREFIX;
 import static com.vecondev.buildoptima.authorizer.Error.ACCESS_TOKEN_EXPIRED;
 import static com.vecondev.buildoptima.authorizer.Error.ACCESS_TOKEN_MISSING;
 import static com.vecondev.buildoptima.authorizer.Error.INVALID_ACCESS_TOKEN;
@@ -47,7 +48,7 @@ public class Authorizer
     String token = event.getAuthorizationToken();
     String auth = AUTHENTICATION_FAIL_RESULT;
     if (token != null) {
-      token = token.replace(JwtConfigProperties.getAuthorizationHeaderPrefix(), "");
+      token = token.replace(AUTHORIZATION_HEADER_PREFIX, "");
       try {
         JWTVerifier jwtVerifier =
             JWT.require(Algorithm.RSA256((RSAPublicKey) CertificateManager.publicKey())).build();

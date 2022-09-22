@@ -1,0 +1,117 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create/Update AWS Api Gateway, it's all resources and methods
+
+Parameters:
+  RestApiName:
+    Type: String
+    Description: The name of Api Gateway Rest Api
+  S3BucketName:
+    Type: String
+    Description: The location of the files that wil be used in this template
+  S3ApiGatewayDocFileKey:
+    Type: String
+    Description: The openapi documentation file name
+  AuthorizationHeaderName:
+    Type: String
+    Description: The header name containing the authorization jwt token
+  LambdaAuthorizerName:
+    Type: String
+    Description: The Lambda Authorizer name
+  ApiGatewayAwsRegion:
+    Type: String
+    Description: The AWS region where API Gateway is running
+  ApiGatewayStageName:
+    Type: String
+    Description: The development stage name where Api Gateway APIs will be deployed
+
+
+Resources:
+  ApiGateway:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Name: !Ref RestApiName
+      BodyS3Location:
+        Bucket: !Ref S3BucketName
+        Key: !Ref S3ApiGatewayDocFileKey
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Tags:
+        - Key: LogicalId
+          Value: ApiGateway
+      BinaryMediaTypes:
+        - 'multipart/form-data'
+  LambdaExecutionPermissionToApiGateway:
+    Type: 'AWS::Lambda::Permission'
+    DependsOn: ApiGateway
+    Properties:
+      FunctionName: !Ref LambdaAuthorizerName
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join
+          - ''
+          - - 'arn:aws:execute-api:'
+            - !Ref ApiGatewayAwsRegion
+            - ':'
+            - !Ref AWS::AccountId
+            - ':'
+            - !Ref ApiGateway
+            - '/*'
+  ApiGatewayUnauthorizedResponse?:
+    Type: 'AWS::ApiGateway::GatewayResponse'
+    DependsOn: ApiGateway
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ResponseType: 'UNAUTHORIZED'
+      ResponseTemplates:
+        application/json: >-
+          {"status": "UNAUTHORIZED",
+           "errorCode": 4012,
+           "timestamp": "$context.requestTime",
+           "message": "Access Token Missing"
+           }
+  ApiGatewayAccessDeniedResponse?:
+    Type: 'AWS::ApiGateway::GatewayResponse'
+    DependsOn: ApiGateway
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ResponseType: 'ACCESS_DENIED'
+      StatusCode: '401'
+      ResponseTemplates:
+        application/json: >-
+          {"status": "$context.authorizer.status",
+           "errorCode": $context.authorizer.errorCode,
+           "timestamp": "$context.authorizer.timestamp",
+           "message": "$context.authorizer.message"
+          }
+  ApiGatewayMissingAuthenticationTokenResponse?:
+    Type: 'AWS::ApiGateway::GatewayResponse'
+    DependsOn: ApiGateway
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ResponseType: 'MISSING_AUTHENTICATION_TOKEN'
+      StatusCode: '401'
+      ResponseTemplates:
+        application/json: >-
+          {"status": "UNAUTHORIZED",
+           "errorCode": 4012,
+           "timestamp": "$context.requestTime",
+           "message": "Access Token Missing"
+          }
+# Consider replacing this name before each update of stack keeping this naming convention 'ApiGatewayDeployment{GITHUB_SHA}'
+  ApiGatewayDeployment?:
+    Type: 'AWS::ApiGateway::Deployment'
+    DependsOn:
+      - ApiGatewayUnauthorizedResponse?
+      - ApiGatewayAccessDeniedResponse?
+      - ApiGatewayMissingAuthenticationTokenResponse?
+    Properties:
+      RestApiId: !Ref ApiGateway
+      StageName: !Ref ApiGatewayStageName
+
+
+
+
+
+
+

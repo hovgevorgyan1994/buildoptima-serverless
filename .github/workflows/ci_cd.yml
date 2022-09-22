@@ -9,7 +9,7 @@ on:
       application_jar_name:
         required: true
         type: string
-      aws_s3_bucket_name:
+      aws_s3_folder_name:
         required: true
         type: string
       aws_lambda_authorizer_name:
@@ -20,10 +20,11 @@ env:
   APPLICATION_NAME: ${{ inputs.application_name }}
   APPLICATION_JAR_NAME: ${{ inputs.application_jar_name }}
   AWS_LAMBDA_AUTHORIZER_NAME: ${{ inputs.aws_lambda_authorizer_name }}
-  AWS_S3_BUCKET_NAME: ${{ inputs.aws_s3_bucket_name }}
+  AWS_S3_FOLDER_NAME: ${{ inputs.aws_s3_folder_name }}
+  AWS_S3_BUCKET_NAME: buildoptima-serverless
 
 jobs:
-  test_build_deploy:
+  build_upload:
     name: Build & Upload To Lambda
     runs-on: ubuntu-latest
     steps:
@@ -48,6 +49,6 @@ jobs:
       - name: Upload Jar To Lambda
         run: |
           cd $APPLICATION_NAME
-          aws s3 cp ./target/$APPLICATION_JAR_NAME s3://$AWS_S3_BUCKET_NAME/$GITHUB_SHA.jar
-          aws lambda update-function-code --function-name $AWS_LAMBDA_AUTHORIZER_NAME --s3-bucket $AWS_S3_BUCKET_NAME --s3-key $GITHUB_SHA.jar
+          aws s3 cp ./target/$APPLICATION_JAR_NAME s3://$AWS_S3_BUCKET_NAME/$AWS_S3_FOLDER_NAME/$GITHUB_SHA.jar
+          aws lambda update-function-code --function-name $AWS_LAMBDA_AUTHORIZER_NAME --s3-bucket $AWS_S3_BUCKET_NAME --s3-key $AWS_S3_FOLDER_NAME/$GITHUB_SHA.jar
           

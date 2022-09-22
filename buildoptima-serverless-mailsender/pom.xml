@@ -25,13 +25,11 @@
       <artifactId>mail</artifactId>
       <version>${javax.mail.version}</version>
     </dependency>
-
     <dependency>
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk-s3</artifactId>
       <version>${aws.sdk.s3.version}</version>
     </dependency>
-
   </dependencies>
 
 </project>

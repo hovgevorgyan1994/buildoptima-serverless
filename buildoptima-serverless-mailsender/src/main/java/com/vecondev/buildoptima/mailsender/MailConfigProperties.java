@@ -2,25 +2,14 @@ package com.vecondev.buildoptima.mailsender;
 
 public class MailConfigProperties {
 
-  public static final String HOST;
-  public static final String PORT;
-  public static final String USERNAME;
-  public static final String PASSWORD;
-  public static final String FROM;
-  public static final String CONFIRMATION_URI;
-  public static final String VERIFICATION_URI;
-  public static final String HOST_ADDRESS;
+  public static final String HOST = System.getenv("SMTP_HOST");
+  public static final String PORT = System.getenv("SMTP_PORT");
+  public static final String USERNAME = System.getenv("SMTP_USERNAME");
+  public static final String PASSWORD = System.getenv("SMTP_PASSWORD");
+  public static final String FROM = System.getenv("MAIL_FROM");
+  public static final String CONFIRMATION_URI = System.getenv("CONFIRMATION_URI");
+  public static final String VERIFICATION_URI = System.getenv("VERIFICATION_URI");
+  public static final String HOST_ADDRESS = System.getenv("HOST_ADDRESS");
 
   private MailConfigProperties() {}
-
-  static {
-    HOST = System.getenv("SMTP_HOST");
-    PORT = System.getenv("SMTP_PORT");
-    USERNAME = System.getenv("SMTP_USERNAME");
-    PASSWORD = System.getenv("SMTP_PASSWORD");
-    FROM = System.getenv("MAIL_FROM");
-    CONFIRMATION_URI = System.getenv("CONFIRMATION_URI");
-    VERIFICATION_URI = System.getenv("VERIFICATION_URI");
-    HOST_ADDRESS = System.getenv("HOST_ADDRESS");
-  }
 }

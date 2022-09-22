@@ -1,5 +1,7 @@
 package com.vecondev.buildoptima.authorizer;
 
+import static com.vecondev.buildoptima.authorizer.ConfigProperties.SIGNATURE_ALGORITHM;
+
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.lang.Assert;
 import java.io.IOException;
@@ -17,8 +19,7 @@ public class CertificateManager {
   private CertificateManager() {}
 
   public static PublicKey publicKey() {
-    SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.forName(
-        JwtConfigProperties.getSignatureAlgorithm());
+    SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.forName(SIGNATURE_ALGORITHM);
     Assert.notNull(PUBLIC_KEY_PATH, "Public key path is required");
     try {
       KeyFactory keyFactory = KeyFactory.getInstance(signatureAlgorithm.getFamilyName());
