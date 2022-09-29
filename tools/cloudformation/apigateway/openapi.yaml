@@ -2428,6 +2428,8 @@ paths:
             statusCode: "404"
           "409":
             statusCode: "409"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
           "500":
             statusCode: "500"
         requestParameters:
